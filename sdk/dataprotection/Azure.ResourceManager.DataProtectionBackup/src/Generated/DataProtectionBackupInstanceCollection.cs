@@ -72,8 +72,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.CreateOrUpdateAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, backupInstanceName, data, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupInstanceResource>(new DataProtectionBackupInstanceOperationSource(Client), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, backupInstanceName, data).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.CreateOrUpdateAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, backupInstanceName, data, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupInstanceResource>(new DataProtectionBackupInstanceOperationSource(Client), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateCreateOrUpdateRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, backupInstanceName, data).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -105,8 +105,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.CreateOrUpdate(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, backupInstanceName, data, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupInstanceResource>(new DataProtectionBackupInstanceOperationSource(Client), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, backupInstanceName, data).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.CreateOrUpdate(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, backupInstanceName, data, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupInstanceResource>(new DataProtectionBackupInstanceOperationSource(Client), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateCreateOrUpdateRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, backupInstanceName, data).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletion(cancellationToken);
                 return operation;
@@ -135,7 +135,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, backupInstanceName, cancellationToken).ConfigureAwait(false);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, backupInstanceName, cancellationToken).ConfigureAwait(false);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DataProtectionBackupInstanceResource(Client, response.Value), response.GetRawResponse());
@@ -164,7 +164,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, backupInstanceName, cancellationToken);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, backupInstanceName, cancellationToken);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DataProtectionBackupInstanceResource(Client, response.Value), response.GetRawResponse());
@@ -185,8 +185,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="DataProtectionBackupInstanceResource" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<DataProtectionBackupInstanceResource> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupInstanceBackupInstancesRestClient.CreateListRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupInstanceBackupInstancesRestClient.CreateListNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupInstanceBackupInstancesRestClient.CreateListRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupInstanceBackupInstancesRestClient.CreateListNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new DataProtectionBackupInstanceResource(Client, DataProtectionBackupInstanceData.DeserializeDataProtectionBackupInstanceData(e)), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, "DataProtectionBackupInstanceCollection.GetAll", "value", "nextLink", cancellationToken);
         }
 
@@ -199,8 +199,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="DataProtectionBackupInstanceResource" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<DataProtectionBackupInstanceResource> GetAll(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupInstanceBackupInstancesRestClient.CreateListRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupInstanceBackupInstancesRestClient.CreateListNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupInstanceBackupInstancesRestClient.CreateListRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupInstanceBackupInstancesRestClient.CreateListNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new DataProtectionBackupInstanceResource(Client, DataProtectionBackupInstanceData.DeserializeDataProtectionBackupInstanceData(e)), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, "DataProtectionBackupInstanceCollection.GetAll", "value", "nextLink", cancellationToken);
         }
 
@@ -221,7 +221,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, backupInstanceName, cancellationToken: cancellationToken).ConfigureAwait(false);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, backupInstanceName, cancellationToken: cancellationToken).ConfigureAwait(false);
                 return Response.FromValue(response.Value != null, response.GetRawResponse());
             }
             catch (Exception e)
@@ -248,7 +248,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, backupInstanceName, cancellationToken: cancellationToken);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, backupInstanceName, cancellationToken: cancellationToken);
                 return Response.FromValue(response.Value != null, response.GetRawResponse());
             }
             catch (Exception e)

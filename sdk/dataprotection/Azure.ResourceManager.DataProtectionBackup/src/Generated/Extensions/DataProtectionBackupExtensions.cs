@@ -19,13 +19,113 @@ namespace Azure.ResourceManager.DataProtectionBackup
     /// <summary> A class to add extension methods to Azure.ResourceManager.DataProtectionBackup. </summary>
     public static partial class DataProtectionBackupExtensions
     {
-        private static SubscriptionResourceExtensionClient GetExtensionClient(SubscriptionResource subscriptionResource)
+        private static TenantResourceExtensionClient GetExtensionClient(TenantResource tenantResource)
         {
-            return subscriptionResource.GetCachedClient((client) =>
+            return tenantResource.GetCachedClient((client) =>
             {
-                return new SubscriptionResourceExtensionClient(client, subscriptionResource.Id);
+                return new TenantResourceExtensionClient(client, tenantResource.Id);
             }
             );
+        }
+
+        /// <summary> Gets a collection of DataProtectionBackupVaultResources in the TenantResource. </summary>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
+        /// <param name="resourceGroupName"> The name of the resource group. The name is case insensitive. </param>
+        /// <exception cref="ArgumentException"> <paramref name="resourceGroupName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="resourceGroupName"/> is null. </exception>
+        /// <returns> An object representing collection of DataProtectionBackupVaultResources and their operations over a DataProtectionBackupVaultResource. </returns>
+        public static DataProtectionBackupVaultCollection GetDataProtectionBackupVaults(this TenantResource tenantResource, Guid subscriptionId, string resourceGroupName)
+        {
+            Argument.AssertNotNullOrEmpty(resourceGroupName, nameof(resourceGroupName));
+
+            return GetExtensionClient(tenantResource).GetDataProtectionBackupVaults(subscriptionId, resourceGroupName);
+        }
+
+        /// <summary>
+        /// Returns a resource belonging to a resource group.
+        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}
+        /// Operation Id: BackupVaults_Get
+        /// </summary>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
+        /// <param name="resourceGroupName"> The name of the resource group. The name is case insensitive. </param>
+        /// <param name="vaultName"> The name of the backup vault. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <exception cref="ArgumentException"> <paramref name="resourceGroupName"/> or <paramref name="vaultName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="resourceGroupName"/> or <paramref name="vaultName"/> is null. </exception>
+        [ForwardsClientCalls]
+        public static async Task<Response<DataProtectionBackupVaultResource>> GetDataProtectionBackupVaultAsync(this TenantResource tenantResource, Guid subscriptionId, string resourceGroupName, string vaultName, CancellationToken cancellationToken = default)
+        {
+            return await tenantResource.GetDataProtectionBackupVaults(subscriptionId, resourceGroupName).GetAsync(vaultName, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Returns a resource belonging to a resource group.
+        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}
+        /// Operation Id: BackupVaults_Get
+        /// </summary>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
+        /// <param name="resourceGroupName"> The name of the resource group. The name is case insensitive. </param>
+        /// <param name="vaultName"> The name of the backup vault. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <exception cref="ArgumentException"> <paramref name="resourceGroupName"/> or <paramref name="vaultName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="resourceGroupName"/> or <paramref name="vaultName"/> is null. </exception>
+        [ForwardsClientCalls]
+        public static Response<DataProtectionBackupVaultResource> GetDataProtectionBackupVault(this TenantResource tenantResource, Guid subscriptionId, string resourceGroupName, string vaultName, CancellationToken cancellationToken = default)
+        {
+            return tenantResource.GetDataProtectionBackupVaults(subscriptionId, resourceGroupName).Get(vaultName, cancellationToken);
+        }
+
+        /// <summary> Gets a collection of ResourceGuardResources in the TenantResource. </summary>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
+        /// <param name="resourceGroupName"> The name of the resource group. The name is case insensitive. </param>
+        /// <exception cref="ArgumentException"> <paramref name="resourceGroupName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="resourceGroupName"/> is null. </exception>
+        /// <returns> An object representing collection of ResourceGuardResources and their operations over a ResourceGuardResource. </returns>
+        public static ResourceGuardCollection GetResourceGuards(this TenantResource tenantResource, Guid subscriptionId, string resourceGroupName)
+        {
+            Argument.AssertNotNullOrEmpty(resourceGroupName, nameof(resourceGroupName));
+
+            return GetExtensionClient(tenantResource).GetResourceGuards(subscriptionId, resourceGroupName);
+        }
+
+        /// <summary>
+        /// Returns a ResourceGuard belonging to a resource group.
+        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/resourceGuards/{resourceGuardsName}
+        /// Operation Id: ResourceGuards_Get
+        /// </summary>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
+        /// <param name="resourceGroupName"> The name of the resource group. The name is case insensitive. </param>
+        /// <param name="resourceGuardsName"> The name of ResourceGuard. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <exception cref="ArgumentException"> <paramref name="resourceGroupName"/> or <paramref name="resourceGuardsName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="resourceGroupName"/> or <paramref name="resourceGuardsName"/> is null. </exception>
+        [ForwardsClientCalls]
+        public static async Task<Response<ResourceGuardResource>> GetResourceGuardAsync(this TenantResource tenantResource, Guid subscriptionId, string resourceGroupName, string resourceGuardsName, CancellationToken cancellationToken = default)
+        {
+            return await tenantResource.GetResourceGuards(subscriptionId, resourceGroupName).GetAsync(resourceGuardsName, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Returns a ResourceGuard belonging to a resource group.
+        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/resourceGuards/{resourceGuardsName}
+        /// Operation Id: ResourceGuards_Get
+        /// </summary>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
+        /// <param name="resourceGroupName"> The name of the resource group. The name is case insensitive. </param>
+        /// <param name="resourceGuardsName"> The name of ResourceGuard. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <exception cref="ArgumentException"> <paramref name="resourceGroupName"/> or <paramref name="resourceGuardsName"/> is an empty string, and was expected to be non-empty. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="resourceGroupName"/> or <paramref name="resourceGuardsName"/> is null. </exception>
+        [ForwardsClientCalls]
+        public static Response<ResourceGuardResource> GetResourceGuard(this TenantResource tenantResource, Guid subscriptionId, string resourceGroupName, string resourceGuardsName, CancellationToken cancellationToken = default)
+        {
+            return tenantResource.GetResourceGuards(subscriptionId, resourceGroupName).Get(resourceGuardsName, cancellationToken);
         }
 
         /// <summary>
@@ -33,12 +133,12 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// Request Path: /subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/backupVaults
         /// Operation Id: BackupVaults_GetInSubscription
         /// </summary>
-        /// <param name="subscriptionResource"> The <see cref="SubscriptionResource" /> instance the method will execute against. </param>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <returns> An async collection of <see cref="DataProtectionBackupVaultResource" /> that may take multiple service requests to iterate over. </returns>
-        public static AsyncPageable<DataProtectionBackupVaultResource> GetDataProtectionBackupVaultsAsync(this SubscriptionResource subscriptionResource, CancellationToken cancellationToken = default)
+        public static AsyncPageable<DataProtectionBackupVaultResource> GetDataProtectionBackupVaultsAsync(this TenantResource tenantResource, CancellationToken cancellationToken = default)
         {
-            return GetExtensionClient(subscriptionResource).GetDataProtectionBackupVaultsAsync(cancellationToken);
+            return GetExtensionClient(tenantResource).GetDataProtectionBackupVaultsAsync(cancellationToken);
         }
 
         /// <summary>
@@ -46,12 +146,46 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// Request Path: /subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/backupVaults
         /// Operation Id: BackupVaults_GetInSubscription
         /// </summary>
-        /// <param name="subscriptionResource"> The <see cref="SubscriptionResource" /> instance the method will execute against. </param>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <returns> A collection of <see cref="DataProtectionBackupVaultResource" /> that may take multiple service requests to iterate over. </returns>
-        public static Pageable<DataProtectionBackupVaultResource> GetDataProtectionBackupVaults(this SubscriptionResource subscriptionResource, CancellationToken cancellationToken = default)
+        public static Pageable<DataProtectionBackupVaultResource> GetDataProtectionBackupVaults(this TenantResource tenantResource, CancellationToken cancellationToken = default)
         {
-            return GetExtensionClient(subscriptionResource).GetDataProtectionBackupVaults(cancellationToken);
+            return GetExtensionClient(tenantResource).GetDataProtectionBackupVaults(cancellationToken);
+        }
+
+        /// <summary>
+        /// API to check for resource name availability
+        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/checkNameAvailability
+        /// Operation Id: BackupVaults_CheckNameAvailability
+        /// </summary>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="location"> The location in which uniqueness will be verified. </param>
+        /// <param name="content"> Check name availability request. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="content"/> is null. </exception>
+        public static async Task<Response<DataProtectionBackupNameAvailabilityResult>> CheckDataProtectionBackupVaultNameAvailabilityAsync(this TenantResource tenantResource, AzureLocation location, DataProtectionBackupNameAvailabilityContent content, CancellationToken cancellationToken = default)
+        {
+            Argument.AssertNotNull(content, nameof(content));
+
+            return await GetExtensionClient(tenantResource).CheckDataProtectionBackupVaultNameAvailabilityAsync(location, content, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// API to check for resource name availability
+        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/checkNameAvailability
+        /// Operation Id: BackupVaults_CheckNameAvailability
+        /// </summary>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="location"> The location in which uniqueness will be verified. </param>
+        /// <param name="content"> Check name availability request. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="content"/> is null. </exception>
+        public static Response<DataProtectionBackupNameAvailabilityResult> CheckDataProtectionBackupVaultNameAvailability(this TenantResource tenantResource, AzureLocation location, DataProtectionBackupNameAvailabilityContent content, CancellationToken cancellationToken = default)
+        {
+            Argument.AssertNotNull(content, nameof(content));
+
+            return GetExtensionClient(tenantResource).CheckDataProtectionBackupVaultNameAvailability(location, content, cancellationToken);
         }
 
         /// <summary>
@@ -59,16 +193,17 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// Request Path: /subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/locations/{location}/checkFeatureSupport
         /// Operation Id: DataProtection_CheckFeatureSupport
         /// </summary>
-        /// <param name="subscriptionResource"> The <see cref="SubscriptionResource" /> instance the method will execute against. </param>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
         /// <param name="location"> The String to use. </param>
         /// <param name="content"> Feature support request object. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="content"/> is null. </exception>
-        public static async Task<Response<BackupFeatureValidationResultBase>> CheckDataProtectionBackupFeatureSupportAsync(this SubscriptionResource subscriptionResource, AzureLocation location, BackupFeatureValidationContentBase content, CancellationToken cancellationToken = default)
+        public static async Task<Response<BackupFeatureValidationResultBase>> CheckDataProtectionBackupFeatureSupportAsync(this TenantResource tenantResource, Guid subscriptionId, AzureLocation location, BackupFeatureValidationContentBase content, CancellationToken cancellationToken = default)
         {
             Argument.AssertNotNull(content, nameof(content));
 
-            return await GetExtensionClient(subscriptionResource).CheckDataProtectionBackupFeatureSupportAsync(location, content, cancellationToken).ConfigureAwait(false);
+            return await GetExtensionClient(tenantResource).CheckDataProtectionBackupFeatureSupportAsync(subscriptionId, location, content, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -76,16 +211,17 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// Request Path: /subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/locations/{location}/checkFeatureSupport
         /// Operation Id: DataProtection_CheckFeatureSupport
         /// </summary>
-        /// <param name="subscriptionResource"> The <see cref="SubscriptionResource" /> instance the method will execute against. </param>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
         /// <param name="location"> The String to use. </param>
         /// <param name="content"> Feature support request object. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="content"/> is null. </exception>
-        public static Response<BackupFeatureValidationResultBase> CheckDataProtectionBackupFeatureSupport(this SubscriptionResource subscriptionResource, AzureLocation location, BackupFeatureValidationContentBase content, CancellationToken cancellationToken = default)
+        public static Response<BackupFeatureValidationResultBase> CheckDataProtectionBackupFeatureSupport(this TenantResource tenantResource, Guid subscriptionId, AzureLocation location, BackupFeatureValidationContentBase content, CancellationToken cancellationToken = default)
         {
             Argument.AssertNotNull(content, nameof(content));
 
-            return GetExtensionClient(subscriptionResource).CheckDataProtectionBackupFeatureSupport(location, content, cancellationToken);
+            return GetExtensionClient(tenantResource).CheckDataProtectionBackupFeatureSupport(subscriptionId, location, content, cancellationToken);
         }
 
         /// <summary>
@@ -93,12 +229,12 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// Request Path: /subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/resourceGuards
         /// Operation Id: ResourceGuards_GetResourcesInSubscription
         /// </summary>
-        /// <param name="subscriptionResource"> The <see cref="SubscriptionResource" /> instance the method will execute against. </param>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <returns> An async collection of <see cref="ResourceGuardResource" /> that may take multiple service requests to iterate over. </returns>
-        public static AsyncPageable<ResourceGuardResource> GetResourceGuardsAsync(this SubscriptionResource subscriptionResource, CancellationToken cancellationToken = default)
+        public static AsyncPageable<ResourceGuardResource> GetResourceGuardsAsync(this TenantResource tenantResource, CancellationToken cancellationToken = default)
         {
-            return GetExtensionClient(subscriptionResource).GetResourceGuardsAsync(cancellationToken);
+            return GetExtensionClient(tenantResource).GetResourceGuardsAsync(cancellationToken);
         }
 
         /// <summary>
@@ -106,135 +242,12 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// Request Path: /subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/resourceGuards
         /// Operation Id: ResourceGuards_GetResourcesInSubscription
         /// </summary>
-        /// <param name="subscriptionResource"> The <see cref="SubscriptionResource" /> instance the method will execute against. </param>
+        /// <param name="tenantResource"> The <see cref="TenantResource" /> instance the method will execute against. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <returns> A collection of <see cref="ResourceGuardResource" /> that may take multiple service requests to iterate over. </returns>
-        public static Pageable<ResourceGuardResource> GetResourceGuards(this SubscriptionResource subscriptionResource, CancellationToken cancellationToken = default)
+        public static Pageable<ResourceGuardResource> GetResourceGuards(this TenantResource tenantResource, CancellationToken cancellationToken = default)
         {
-            return GetExtensionClient(subscriptionResource).GetResourceGuards(cancellationToken);
-        }
-
-        private static ResourceGroupResourceExtensionClient GetExtensionClient(ResourceGroupResource resourceGroupResource)
-        {
-            return resourceGroupResource.GetCachedClient((client) =>
-            {
-                return new ResourceGroupResourceExtensionClient(client, resourceGroupResource.Id);
-            }
-            );
-        }
-
-        /// <summary> Gets a collection of DataProtectionBackupVaultResources in the ResourceGroupResource. </summary>
-        /// <param name="resourceGroupResource"> The <see cref="ResourceGroupResource" /> instance the method will execute against. </param>
-        /// <returns> An object representing collection of DataProtectionBackupVaultResources and their operations over a DataProtectionBackupVaultResource. </returns>
-        public static DataProtectionBackupVaultCollection GetDataProtectionBackupVaults(this ResourceGroupResource resourceGroupResource)
-        {
-            return GetExtensionClient(resourceGroupResource).GetDataProtectionBackupVaults();
-        }
-
-        /// <summary>
-        /// Returns a resource belonging to a resource group.
-        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}
-        /// Operation Id: BackupVaults_Get
-        /// </summary>
-        /// <param name="resourceGroupResource"> The <see cref="ResourceGroupResource" /> instance the method will execute against. </param>
-        /// <param name="vaultName"> The name of the backup vault. </param>
-        /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentException"> <paramref name="vaultName"/> is an empty string, and was expected to be non-empty. </exception>
-        /// <exception cref="ArgumentNullException"> <paramref name="vaultName"/> is null. </exception>
-        [ForwardsClientCalls]
-        public static async Task<Response<DataProtectionBackupVaultResource>> GetDataProtectionBackupVaultAsync(this ResourceGroupResource resourceGroupResource, string vaultName, CancellationToken cancellationToken = default)
-        {
-            return await resourceGroupResource.GetDataProtectionBackupVaults().GetAsync(vaultName, cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Returns a resource belonging to a resource group.
-        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}
-        /// Operation Id: BackupVaults_Get
-        /// </summary>
-        /// <param name="resourceGroupResource"> The <see cref="ResourceGroupResource" /> instance the method will execute against. </param>
-        /// <param name="vaultName"> The name of the backup vault. </param>
-        /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentException"> <paramref name="vaultName"/> is an empty string, and was expected to be non-empty. </exception>
-        /// <exception cref="ArgumentNullException"> <paramref name="vaultName"/> is null. </exception>
-        [ForwardsClientCalls]
-        public static Response<DataProtectionBackupVaultResource> GetDataProtectionBackupVault(this ResourceGroupResource resourceGroupResource, string vaultName, CancellationToken cancellationToken = default)
-        {
-            return resourceGroupResource.GetDataProtectionBackupVaults().Get(vaultName, cancellationToken);
-        }
-
-        /// <summary> Gets a collection of ResourceGuardResources in the ResourceGroupResource. </summary>
-        /// <param name="resourceGroupResource"> The <see cref="ResourceGroupResource" /> instance the method will execute against. </param>
-        /// <returns> An object representing collection of ResourceGuardResources and their operations over a ResourceGuardResource. </returns>
-        public static ResourceGuardCollection GetResourceGuards(this ResourceGroupResource resourceGroupResource)
-        {
-            return GetExtensionClient(resourceGroupResource).GetResourceGuards();
-        }
-
-        /// <summary>
-        /// Returns a ResourceGuard belonging to a resource group.
-        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/resourceGuards/{resourceGuardsName}
-        /// Operation Id: ResourceGuards_Get
-        /// </summary>
-        /// <param name="resourceGroupResource"> The <see cref="ResourceGroupResource" /> instance the method will execute against. </param>
-        /// <param name="resourceGuardsName"> The name of ResourceGuard. </param>
-        /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentException"> <paramref name="resourceGuardsName"/> is an empty string, and was expected to be non-empty. </exception>
-        /// <exception cref="ArgumentNullException"> <paramref name="resourceGuardsName"/> is null. </exception>
-        [ForwardsClientCalls]
-        public static async Task<Response<ResourceGuardResource>> GetResourceGuardAsync(this ResourceGroupResource resourceGroupResource, string resourceGuardsName, CancellationToken cancellationToken = default)
-        {
-            return await resourceGroupResource.GetResourceGuards().GetAsync(resourceGuardsName, cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Returns a ResourceGuard belonging to a resource group.
-        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/resourceGuards/{resourceGuardsName}
-        /// Operation Id: ResourceGuards_Get
-        /// </summary>
-        /// <param name="resourceGroupResource"> The <see cref="ResourceGroupResource" /> instance the method will execute against. </param>
-        /// <param name="resourceGuardsName"> The name of ResourceGuard. </param>
-        /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentException"> <paramref name="resourceGuardsName"/> is an empty string, and was expected to be non-empty. </exception>
-        /// <exception cref="ArgumentNullException"> <paramref name="resourceGuardsName"/> is null. </exception>
-        [ForwardsClientCalls]
-        public static Response<ResourceGuardResource> GetResourceGuard(this ResourceGroupResource resourceGroupResource, string resourceGuardsName, CancellationToken cancellationToken = default)
-        {
-            return resourceGroupResource.GetResourceGuards().Get(resourceGuardsName, cancellationToken);
-        }
-
-        /// <summary>
-        /// API to check for resource name availability
-        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/checkNameAvailability
-        /// Operation Id: BackupVaults_CheckNameAvailability
-        /// </summary>
-        /// <param name="resourceGroupResource"> The <see cref="ResourceGroupResource" /> instance the method will execute against. </param>
-        /// <param name="location"> The location in which uniqueness will be verified. </param>
-        /// <param name="content"> Check name availability request. </param>
-        /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="content"/> is null. </exception>
-        public static async Task<Response<DataProtectionBackupNameAvailabilityResult>> CheckDataProtectionBackupVaultNameAvailabilityAsync(this ResourceGroupResource resourceGroupResource, AzureLocation location, DataProtectionBackupNameAvailabilityContent content, CancellationToken cancellationToken = default)
-        {
-            Argument.AssertNotNull(content, nameof(content));
-
-            return await GetExtensionClient(resourceGroupResource).CheckDataProtectionBackupVaultNameAvailabilityAsync(location, content, cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// API to check for resource name availability
-        /// Request Path: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/checkNameAvailability
-        /// Operation Id: BackupVaults_CheckNameAvailability
-        /// </summary>
-        /// <param name="resourceGroupResource"> The <see cref="ResourceGroupResource" /> instance the method will execute against. </param>
-        /// <param name="location"> The location in which uniqueness will be verified. </param>
-        /// <param name="content"> Check name availability request. </param>
-        /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="content"/> is null. </exception>
-        public static Response<DataProtectionBackupNameAvailabilityResult> CheckDataProtectionBackupVaultNameAvailability(this ResourceGroupResource resourceGroupResource, AzureLocation location, DataProtectionBackupNameAvailabilityContent content, CancellationToken cancellationToken = default)
-        {
-            Argument.AssertNotNull(content, nameof(content));
-
-            return GetExtensionClient(resourceGroupResource).CheckDataProtectionBackupVaultNameAvailability(location, content, cancellationToken);
+            return GetExtensionClient(tenantResource).GetResourceGuards(cancellationToken);
         }
 
         #region DataProtectionBackupVaultResource
@@ -327,6 +340,25 @@ namespace Azure.ResourceManager.DataProtectionBackup
             {
                 DataProtectionBackupJobResource.ValidateResourceId(id);
                 return new DataProtectionBackupJobResource(client, id);
+            }
+            );
+        }
+        #endregion
+
+        #region DeletedBackupInstanceResource
+        /// <summary>
+        /// Gets an object representing a <see cref="DeletedBackupInstanceResource" /> along with the instance operations that can be performed on it but with no data.
+        /// You can use <see cref="DeletedBackupInstanceResource.CreateResourceIdentifier" /> to create a <see cref="DeletedBackupInstanceResource" /> <see cref="ResourceIdentifier" /> from its components.
+        /// </summary>
+        /// <param name="client"> The <see cref="ArmClient" /> instance the method will execute against. </param>
+        /// <param name="id"> The resource ID of the resource to get. </param>
+        /// <returns> Returns a <see cref="DeletedBackupInstanceResource" /> object. </returns>
+        public static DeletedBackupInstanceResource GetDeletedBackupInstanceResource(this ArmClient client, ResourceIdentifier id)
+        {
+            return client.GetResourceClient(() =>
+            {
+                DeletedBackupInstanceResource.ValidateResourceId(id);
+                return new DeletedBackupInstanceResource(client, id);
             }
             );
         }

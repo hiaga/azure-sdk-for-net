@@ -21,13 +21,15 @@ namespace Azure.ResourceManager.DataProtectionBackup
 {
     /// <summary>
     /// A class representing a collection of <see cref="ResourceGuardResource" /> and their operations.
-    /// Each <see cref="ResourceGuardResource" /> in the collection will belong to the same instance of <see cref="ResourceGroupResource" />.
-    /// To get a <see cref="ResourceGuardCollection" /> instance call the GetResourceGuards method from an instance of <see cref="ResourceGroupResource" />.
+    /// Each <see cref="ResourceGuardResource" /> in the collection will belong to the same instance of <see cref="TenantResource" />.
+    /// To get a <see cref="ResourceGuardCollection" /> instance call the GetResourceGuards method from an instance of <see cref="TenantResource" />.
     /// </summary>
     public partial class ResourceGuardCollection : ArmCollection, IEnumerable<ResourceGuardResource>, IAsyncEnumerable<ResourceGuardResource>
     {
         private readonly ClientDiagnostics _resourceGuardClientDiagnostics;
         private readonly ResourceGuardsRestOperations _resourceGuardRestClient;
+        private readonly Guid _subscriptionId;
+        private readonly string _resourceGroupName;
 
         /// <summary> Initializes a new instance of the <see cref="ResourceGuardCollection"/> class for mocking. </summary>
         protected ResourceGuardCollection()
@@ -37,8 +39,14 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <summary> Initializes a new instance of the <see cref="ResourceGuardCollection"/> class. </summary>
         /// <param name="client"> The client parameters to use in these operations. </param>
         /// <param name="id"> The identifier of the parent resource that is the target of operations. </param>
-        internal ResourceGuardCollection(ArmClient client, ResourceIdentifier id) : base(client, id)
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
+        /// <param name="resourceGroupName"> The name of the resource group. The name is case insensitive. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="resourceGroupName"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="resourceGroupName"/> is an empty string, and was expected to be non-empty. </exception>
+        internal ResourceGuardCollection(ArmClient client, ResourceIdentifier id, Guid subscriptionId, string resourceGroupName) : base(client, id)
         {
+            _subscriptionId = subscriptionId;
+            _resourceGroupName = resourceGroupName;
             _resourceGuardClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.DataProtectionBackup", ResourceGuardResource.ResourceType.Namespace, Diagnostics);
             TryGetApiVersion(ResourceGuardResource.ResourceType, out string resourceGuardApiVersion);
             _resourceGuardRestClient = new ResourceGuardsRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, resourceGuardApiVersion);
@@ -49,8 +57,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
 
         internal static void ValidateResourceId(ResourceIdentifier id)
         {
-            if (id.ResourceType != ResourceGroupResource.ResourceType)
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Invalid resource type {0} expected {1}", id.ResourceType, ResourceGroupResource.ResourceType), nameof(id));
+            if (id.ResourceType != TenantResource.ResourceType)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Invalid resource type {0} expected {1}", id.ResourceType, TenantResource.ResourceType), nameof(id));
         }
 
         /// <summary>
@@ -73,7 +81,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.PutAsync(Id.SubscriptionId, Id.ResourceGroupName, resourceGuardsName, data, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.PutAsync(Guid.Parse(_subscriptionId), _resourceGroupName, resourceGuardsName, data, cancellationToken).ConfigureAwait(false);
                 var operation = new DataProtectionBackupArmOperation<ResourceGuardResource>(Response.FromValue(new ResourceGuardResource(Client, response), response.GetRawResponse()));
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionAsync(cancellationToken).ConfigureAwait(false);
@@ -106,7 +114,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.Put(Id.SubscriptionId, Id.ResourceGroupName, resourceGuardsName, data, cancellationToken);
+                var response = _resourceGuardRestClient.Put(Guid.Parse(_subscriptionId), _resourceGroupName, resourceGuardsName, data, cancellationToken);
                 var operation = new DataProtectionBackupArmOperation<ResourceGuardResource>(Response.FromValue(new ResourceGuardResource(Client, response), response.GetRawResponse()));
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletion(cancellationToken);
@@ -136,7 +144,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, resourceGuardsName, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetAsync(Guid.Parse(_subscriptionId), _resourceGroupName, resourceGuardsName, cancellationToken).ConfigureAwait(false);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new ResourceGuardResource(Client, response.Value), response.GetRawResponse());
@@ -165,7 +173,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, resourceGuardsName, cancellationToken);
+                var response = _resourceGuardRestClient.Get(Guid.Parse(_subscriptionId), _resourceGroupName, resourceGuardsName, cancellationToken);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new ResourceGuardResource(Client, response.Value), response.GetRawResponse());
@@ -186,8 +194,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="ResourceGuardResource" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<ResourceGuardResource> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetResourcesInResourceGroupRequest(Id.SubscriptionId, Id.ResourceGroupName);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetResourcesInResourceGroupNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetResourcesInResourceGroupRequest(Guid.Parse(_subscriptionId), _resourceGroupName);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetResourcesInResourceGroupNextPageRequest(nextLink, Guid.Parse(_subscriptionId), _resourceGroupName);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new ResourceGuardResource(Client, ResourceGuardData.DeserializeResourceGuardData(e)), _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardCollection.GetAll", "value", "nextLink", cancellationToken);
         }
 
@@ -200,8 +208,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="ResourceGuardResource" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<ResourceGuardResource> GetAll(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetResourcesInResourceGroupRequest(Id.SubscriptionId, Id.ResourceGroupName);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetResourcesInResourceGroupNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetResourcesInResourceGroupRequest(Guid.Parse(_subscriptionId), _resourceGroupName);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetResourcesInResourceGroupNextPageRequest(nextLink, Guid.Parse(_subscriptionId), _resourceGroupName);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new ResourceGuardResource(Client, ResourceGuardData.DeserializeResourceGuardData(e)), _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardCollection.GetAll", "value", "nextLink", cancellationToken);
         }
 
@@ -222,7 +230,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, resourceGuardsName, cancellationToken: cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetAsync(Guid.Parse(_subscriptionId), _resourceGroupName, resourceGuardsName, cancellationToken: cancellationToken).ConfigureAwait(false);
                 return Response.FromValue(response.Value != null, response.GetRawResponse());
             }
             catch (Exception e)
@@ -249,7 +257,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, resourceGuardsName, cancellationToken: cancellationToken);
+                var response = _resourceGuardRestClient.Get(Guid.Parse(_subscriptionId), _resourceGroupName, resourceGuardsName, cancellationToken: cancellationToken);
                 return Response.FromValue(response.Value != null, response.GetRawResponse());
             }
             catch (Exception e)

@@ -69,7 +69,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, recoveryPointId, cancellationToken).ConfigureAwait(false);
+                var response = await _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, recoveryPointId, cancellationToken).ConfigureAwait(false);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DataProtectionBackupRecoveryPointResource(Client, response.Value), response.GetRawResponse());
@@ -98,7 +98,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, recoveryPointId, cancellationToken);
+                var response = _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.Get(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, recoveryPointId, cancellationToken);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DataProtectionBackupRecoveryPointResource(Client, response.Value), response.GetRawResponse());
@@ -121,8 +121,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="DataProtectionBackupRecoveryPointResource" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<DataProtectionBackupRecoveryPointResource> GetAllAsync(string filter = null, string skipToken = null, CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.CreateListRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, filter, skipToken);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.CreateListNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, filter, skipToken);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.CreateListRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, filter, skipToken);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.CreateListNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, filter, skipToken);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new DataProtectionBackupRecoveryPointResource(Client, DataProtectionBackupRecoveryPointData.DeserializeDataProtectionBackupRecoveryPointData(e)), _dataProtectionBackupRecoveryPointRecoveryPointsClientDiagnostics, Pipeline, "DataProtectionBackupRecoveryPointCollection.GetAll", "value", "nextLink", cancellationToken);
         }
 
@@ -137,8 +137,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="DataProtectionBackupRecoveryPointResource" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<DataProtectionBackupRecoveryPointResource> GetAll(string filter = null, string skipToken = null, CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.CreateListRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, filter, skipToken);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.CreateListNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, filter, skipToken);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.CreateListRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, filter, skipToken);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.CreateListNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, filter, skipToken);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new DataProtectionBackupRecoveryPointResource(Client, DataProtectionBackupRecoveryPointData.DeserializeDataProtectionBackupRecoveryPointData(e)), _dataProtectionBackupRecoveryPointRecoveryPointsClientDiagnostics, Pipeline, "DataProtectionBackupRecoveryPointCollection.GetAll", "value", "nextLink", cancellationToken);
         }
 
@@ -159,7 +159,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, recoveryPointId, cancellationToken: cancellationToken).ConfigureAwait(false);
+                var response = await _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, recoveryPointId, cancellationToken: cancellationToken).ConfigureAwait(false);
                 return Response.FromValue(response.Value != null, response.GetRawResponse());
             }
             catch (Exception e)
@@ -186,7 +186,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, recoveryPointId, cancellationToken: cancellationToken);
+                var response = _dataProtectionBackupRecoveryPointRecoveryPointsRestClient.Get(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, recoveryPointId, cancellationToken: cancellationToken);
                 return Response.FromValue(response.Value != null, response.GetRawResponse());
             }
             catch (Exception e)

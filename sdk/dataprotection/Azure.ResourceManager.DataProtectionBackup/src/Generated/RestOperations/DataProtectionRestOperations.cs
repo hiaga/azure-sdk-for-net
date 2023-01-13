@@ -33,11 +33,11 @@ namespace Azure.ResourceManager.DataProtectionBackup
         {
             _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
             _endpoint = endpoint ?? new Uri("https://management.azure.com");
-            _apiVersion = apiVersion ?? "2022-05-01";
+            _apiVersion = apiVersion ?? "2022-12-01";
             _userAgent = new TelemetryDetails(GetType().Assembly, applicationId);
         }
 
-        internal HttpMessage CreateCheckFeatureSupportRequest(string subscriptionId, AzureLocation location, BackupFeatureValidationContentBase content)
+        internal HttpMessage CreateCheckFeatureSupportRequest(Guid subscriptionId, AzureLocation location, BackupFeatureValidationContentBase content)
         {
             var message = _pipeline.CreateMessage();
             var request = message.Request;
@@ -61,15 +61,13 @@ namespace Azure.ResourceManager.DataProtectionBackup
         }
 
         /// <summary> Validates if a feature is supported. </summary>
-        /// <param name="subscriptionId"> The subscription Id. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
         /// <param name="location"> The String to use. </param>
         /// <param name="content"> Feature support request object. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="subscriptionId"/> or <paramref name="content"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="subscriptionId"/> is an empty string, and was expected to be non-empty. </exception>
-        public async Task<Response<BackupFeatureValidationResultBase>> CheckFeatureSupportAsync(string subscriptionId, AzureLocation location, BackupFeatureValidationContentBase content, CancellationToken cancellationToken = default)
+        /// <exception cref="ArgumentNullException"> <paramref name="content"/> is null. </exception>
+        public async Task<Response<BackupFeatureValidationResultBase>> CheckFeatureSupportAsync(Guid subscriptionId, AzureLocation location, BackupFeatureValidationContentBase content, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(subscriptionId, nameof(subscriptionId));
             Argument.AssertNotNull(content, nameof(content));
 
             using var message = CreateCheckFeatureSupportRequest(subscriptionId, location, content);
@@ -89,15 +87,13 @@ namespace Azure.ResourceManager.DataProtectionBackup
         }
 
         /// <summary> Validates if a feature is supported. </summary>
-        /// <param name="subscriptionId"> The subscription Id. </param>
+        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
         /// <param name="location"> The String to use. </param>
         /// <param name="content"> Feature support request object. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="subscriptionId"/> or <paramref name="content"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="subscriptionId"/> is an empty string, and was expected to be non-empty. </exception>
-        public Response<BackupFeatureValidationResultBase> CheckFeatureSupport(string subscriptionId, AzureLocation location, BackupFeatureValidationContentBase content, CancellationToken cancellationToken = default)
+        /// <exception cref="ArgumentNullException"> <paramref name="content"/> is null. </exception>
+        public Response<BackupFeatureValidationResultBase> CheckFeatureSupport(Guid subscriptionId, AzureLocation location, BackupFeatureValidationContentBase content, CancellationToken cancellationToken = default)
         {
-            Argument.AssertNotNullOrEmpty(subscriptionId, nameof(subscriptionId));
             Argument.AssertNotNull(content, nameof(content));
 
             using var message = CreateCheckFeatureSupportRequest(subscriptionId, location, content);
