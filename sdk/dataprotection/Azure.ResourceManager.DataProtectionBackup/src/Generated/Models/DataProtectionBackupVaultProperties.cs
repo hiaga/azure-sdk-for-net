@@ -70,8 +70,6 @@ namespace Azure.ResourceManager.DataProtectionBackup.Models
         public SecuritySettings SecuritySettings { get; set; }
         /// <summary> Storage Settings. </summary>
         public IList<DataProtectionBackupStorageSetting> StorageSettings { get; }
-        /// <summary> Is vault protected by resource guard. </summary>
-        public bool? IsVaultProtectedByResourceGuard { get; }
         /// <summary> Feature Settings. </summary>
         internal FeatureSettings FeatureSettings { get; set; }
         /// <summary> CrossSubscriptionRestore state. </summary>
