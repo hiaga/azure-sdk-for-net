@@ -409,6 +409,10 @@ namespace Azure.ResourceManager.DataProtectionBackup.Models
         public static bool operator !=(Azure.ResourceManager.DataProtectionBackup.Models.BackupAbsoluteMarker left, Azure.ResourceManager.DataProtectionBackup.Models.BackupAbsoluteMarker right) { throw null; }
         public override string ToString() { throw null; }
     }
+    public abstract partial class BackupDatasourceParameters
+    {
+        protected BackupDatasourceParameters() { }
+    }
     public partial class BackupFeatureValidationContent : Azure.ResourceManager.DataProtectionBackup.Models.BackupFeatureValidationContentBase
     {
         public BackupFeatureValidationContent() { }
@@ -450,8 +454,8 @@ namespace Azure.ResourceManager.DataProtectionBackup.Models
     public partial class BackupInstancePolicyInfo
     {
         public BackupInstancePolicyInfo(Azure.Core.ResourceIdentifier policyId) { }
-        public System.Collections.Generic.IList<Azure.ResourceManager.DataProtectionBackup.Models.DataStoreSettings> DataStoreParametersList { get { throw null; } }
         public Azure.Core.ResourceIdentifier PolicyId { get { throw null; } set { } }
+        public Azure.ResourceManager.DataProtectionBackup.Models.PolicyParameters PolicyParameters { get { throw null; } set { } }
         public string PolicyVersion { get { throw null; } }
     }
     [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
@@ -656,6 +660,11 @@ namespace Azure.ResourceManager.DataProtectionBackup.Models
         public static implicit operator Azure.ResourceManager.DataProtectionBackup.Models.BackupVaultResourceMoveState (string value) { throw null; }
         public static bool operator !=(Azure.ResourceManager.DataProtectionBackup.Models.BackupVaultResourceMoveState left, Azure.ResourceManager.DataProtectionBackup.Models.BackupVaultResourceMoveState right) { throw null; }
         public override string ToString() { throw null; }
+    }
+    public partial class BlobBackupDatasourceParameters : Azure.ResourceManager.DataProtectionBackup.Models.BackupDatasourceParameters
+    {
+        public BlobBackupDatasourceParameters(System.Collections.Generic.IEnumerable<string> containersList) { }
+        public System.Collections.Generic.IList<string> ContainersList { get { throw null; } }
     }
     public partial class CopyOnExpirySetting : Azure.ResourceManager.DataProtectionBackup.Models.DataProtectionBackupCopySetting
     {
@@ -1079,6 +1088,24 @@ namespace Azure.ResourceManager.DataProtectionBackup.Models
         public string ScheduledPurgeTime { get { throw null; } }
     }
     [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    public readonly partial struct ExistingResourcePolicy : System.IEquatable<Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy>
+    {
+        private readonly object _dummy;
+        private readonly int _dummyPrimitive;
+        public ExistingResourcePolicy(string value) { throw null; }
+        public static Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy Patch { get { throw null; } }
+        public static Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy Skip { get { throw null; } }
+        public bool Equals(Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy other) { throw null; }
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        public override bool Equals(object obj) { throw null; }
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        public override int GetHashCode() { throw null; }
+        public static bool operator ==(Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy left, Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy right) { throw null; }
+        public static implicit operator Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy (string value) { throw null; }
+        public static bool operator !=(Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy left, Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy right) { throw null; }
+        public override string ToString() { throw null; }
+    }
+    [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
     public readonly partial struct FeatureSupportStatus : System.IEquatable<Azure.ResourceManager.DataProtectionBackup.Models.FeatureSupportStatus>
     {
         private readonly object _dummy;
@@ -1135,6 +1162,37 @@ namespace Azure.ResourceManager.DataProtectionBackup.Models
         public Azure.ResourceManager.DataProtectionBackup.Models.DataSourceSetInfo DatasourceSetInfo { get { throw null; } set { } }
         public System.Collections.Generic.IList<Azure.ResourceManager.DataProtectionBackup.Models.ItemLevelRestoreCriteria> RestoreCriteria { get { throw null; } }
     }
+    public partial class ItemPathBasedRestoreCriteria : Azure.ResourceManager.DataProtectionBackup.Models.ItemLevelRestoreCriteria
+    {
+        public ItemPathBasedRestoreCriteria(string itemPath, bool isPathRelativeToBackupItem) { }
+        public bool IsPathRelativeToBackupItem { get { throw null; } }
+        public string ItemPath { get { throw null; } }
+        public System.Collections.Generic.IList<string> SubItemPathPrefix { get { throw null; } }
+    }
+    public partial class KubernetesClusterBackupDatasourceParameters : Azure.ResourceManager.DataProtectionBackup.Models.BackupDatasourceParameters
+    {
+        public KubernetesClusterBackupDatasourceParameters(bool snapshotVolumes, bool includeClusterScopeResources) { }
+        public System.Collections.Generic.IList<string> ExcludedNamespaces { get { throw null; } }
+        public System.Collections.Generic.IList<string> ExcludedResourceTypes { get { throw null; } }
+        public bool IncludeClusterScopeResources { get { throw null; } set { } }
+        public System.Collections.Generic.IList<string> IncludedNamespaces { get { throw null; } }
+        public System.Collections.Generic.IList<string> IncludedResourceTypes { get { throw null; } }
+        public System.Collections.Generic.IList<string> LabelSelectors { get { throw null; } }
+        public bool SnapshotVolumes { get { throw null; } set { } }
+    }
+    public partial class KubernetesClusterRestoreCriteria : Azure.ResourceManager.DataProtectionBackup.Models.ItemLevelRestoreCriteria
+    {
+        public KubernetesClusterRestoreCriteria(bool includeClusterScopeResources) { }
+        public Azure.ResourceManager.DataProtectionBackup.Models.ExistingResourcePolicy? ConflictPolicy { get { throw null; } set { } }
+        public System.Collections.Generic.IList<string> ExcludedNamespaces { get { throw null; } }
+        public System.Collections.Generic.IList<string> ExcludedResourceTypes { get { throw null; } }
+        public bool IncludeClusterScopeResources { get { throw null; } }
+        public System.Collections.Generic.IList<string> IncludedNamespaces { get { throw null; } }
+        public System.Collections.Generic.IList<string> IncludedResourceTypes { get { throw null; } }
+        public System.Collections.Generic.IList<string> LabelSelectors { get { throw null; } }
+        public System.Collections.Generic.IDictionary<string, string> NamespaceMappings { get { throw null; } }
+        public Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode? PersistentVolumeRestoreMode { get { throw null; } set { } }
+    }
     public partial class KubernetesPVRestoreCriteria : Azure.ResourceManager.DataProtectionBackup.Models.ItemLevelRestoreCriteria
     {
         public KubernetesPVRestoreCriteria() { }
@@ -1158,6 +1216,30 @@ namespace Azure.ResourceManager.DataProtectionBackup.Models
         public Azure.ResourceManager.DataProtectionBackup.Models.AzureMonitorAlertsState? AlertSettingsForAllJobFailures { get { throw null; } set { } }
         public Azure.ResourceManager.DataProtectionBackup.Models.CrossSubscriptionRestoreState? CrossSubscriptionRestoreState { get { throw null; } set { } }
         public Azure.ResourceManager.DataProtectionBackup.Models.SecuritySettings SecuritySettings { get { throw null; } set { } }
+    }
+    [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    public readonly partial struct PersistentVolumeRestoreMode : System.IEquatable<Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode>
+    {
+        private readonly object _dummy;
+        private readonly int _dummyPrimitive;
+        public PersistentVolumeRestoreMode(string value) { throw null; }
+        public static Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode RestoreWithoutVolumeData { get { throw null; } }
+        public static Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode RestoreWithVolumeData { get { throw null; } }
+        public bool Equals(Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode other) { throw null; }
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        public override bool Equals(object obj) { throw null; }
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        public override int GetHashCode() { throw null; }
+        public static bool operator ==(Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode left, Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode right) { throw null; }
+        public static implicit operator Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode (string value) { throw null; }
+        public static bool operator !=(Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode left, Azure.ResourceManager.DataProtectionBackup.Models.PersistentVolumeRestoreMode right) { throw null; }
+        public override string ToString() { throw null; }
+    }
+    public partial class PolicyParameters
+    {
+        public PolicyParameters() { }
+        public System.Collections.Generic.IList<Azure.ResourceManager.DataProtectionBackup.Models.BackupDatasourceParameters> BackupDatasourceParametersList { get { throw null; } }
+        public System.Collections.Generic.IList<Azure.ResourceManager.DataProtectionBackup.Models.DataStoreSettings> DataStoreParametersList { get { throw null; } }
     }
     public partial class RangeBasedItemLevelRestoreCriteria : Azure.ResourceManager.DataProtectionBackup.Models.ItemLevelRestoreCriteria
     {
