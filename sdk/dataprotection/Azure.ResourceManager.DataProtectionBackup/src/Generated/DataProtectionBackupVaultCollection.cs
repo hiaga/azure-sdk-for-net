@@ -21,15 +21,13 @@ namespace Azure.ResourceManager.DataProtectionBackup
 {
     /// <summary>
     /// A class representing a collection of <see cref="DataProtectionBackupVaultResource" /> and their operations.
-    /// Each <see cref="DataProtectionBackupVaultResource" /> in the collection will belong to the same instance of <see cref="TenantResource" />.
-    /// To get a <see cref="DataProtectionBackupVaultCollection" /> instance call the GetDataProtectionBackupVaults method from an instance of <see cref="TenantResource" />.
+    /// Each <see cref="DataProtectionBackupVaultResource" /> in the collection will belong to the same instance of <see cref="ResourceGroupResource" />.
+    /// To get a <see cref="DataProtectionBackupVaultCollection" /> instance call the GetDataProtectionBackupVaults method from an instance of <see cref="ResourceGroupResource" />.
     /// </summary>
     public partial class DataProtectionBackupVaultCollection : ArmCollection, IEnumerable<DataProtectionBackupVaultResource>, IAsyncEnumerable<DataProtectionBackupVaultResource>
     {
         private readonly ClientDiagnostics _dataProtectionBackupVaultBackupVaultsClientDiagnostics;
         private readonly BackupVaultsRestOperations _dataProtectionBackupVaultBackupVaultsRestClient;
-        private readonly Guid _subscriptionId;
-        private readonly string _resourceGroupName;
 
         /// <summary> Initializes a new instance of the <see cref="DataProtectionBackupVaultCollection"/> class for mocking. </summary>
         protected DataProtectionBackupVaultCollection()
@@ -39,14 +37,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <summary> Initializes a new instance of the <see cref="DataProtectionBackupVaultCollection"/> class. </summary>
         /// <param name="client"> The client parameters to use in these operations. </param>
         /// <param name="id"> The identifier of the parent resource that is the target of operations. </param>
-        /// <param name="subscriptionId"> The ID of the target subscription. The value must be an UUID. </param>
-        /// <param name="resourceGroupName"> The name of the resource group. The name is case insensitive. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="resourceGroupName"/> is null. </exception>
-        /// <exception cref="ArgumentException"> <paramref name="resourceGroupName"/> is an empty string, and was expected to be non-empty. </exception>
-        internal DataProtectionBackupVaultCollection(ArmClient client, ResourceIdentifier id, Guid subscriptionId, string resourceGroupName) : base(client, id)
+        internal DataProtectionBackupVaultCollection(ArmClient client, ResourceIdentifier id) : base(client, id)
         {
-            _subscriptionId = subscriptionId;
-            _resourceGroupName = resourceGroupName;
             _dataProtectionBackupVaultBackupVaultsClientDiagnostics = new ClientDiagnostics("Azure.ResourceManager.DataProtectionBackup", DataProtectionBackupVaultResource.ResourceType.Namespace, Diagnostics);
             TryGetApiVersion(DataProtectionBackupVaultResource.ResourceType, out string dataProtectionBackupVaultBackupVaultsApiVersion);
             _dataProtectionBackupVaultBackupVaultsRestClient = new BackupVaultsRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, dataProtectionBackupVaultBackupVaultsApiVersion);
@@ -57,8 +49,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
 
         internal static void ValidateResourceId(ResourceIdentifier id)
         {
-            if (id.ResourceType != TenantResource.ResourceType)
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Invalid resource type {0} expected {1}", id.ResourceType, TenantResource.ResourceType), nameof(id));
+            if (id.ResourceType != ResourceGroupResource.ResourceType)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Invalid resource type {0} expected {1}", id.ResourceType, ResourceGroupResource.ResourceType), nameof(id));
         }
 
         /// <summary>
@@ -81,8 +73,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupVaultBackupVaultsRestClient.CreateOrUpdateAsync(Guid.Parse(_subscriptionId), _resourceGroupName, vaultName, data, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupVaultResource>(new DataProtectionBackupVaultOperationSource(Client), _dataProtectionBackupVaultBackupVaultsClientDiagnostics, Pipeline, _dataProtectionBackupVaultBackupVaultsRestClient.CreateCreateOrUpdateRequest(Guid.Parse(_subscriptionId), _resourceGroupName, vaultName, data).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupVaultBackupVaultsRestClient.CreateOrUpdateAsync(Id.SubscriptionId, Id.ResourceGroupName, vaultName, data, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupVaultResource>(new DataProtectionBackupVaultOperationSource(Client), _dataProtectionBackupVaultBackupVaultsClientDiagnostics, Pipeline, _dataProtectionBackupVaultBackupVaultsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, vaultName, data).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -114,8 +106,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupVaultBackupVaultsRestClient.CreateOrUpdate(Guid.Parse(_subscriptionId), _resourceGroupName, vaultName, data, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupVaultResource>(new DataProtectionBackupVaultOperationSource(Client), _dataProtectionBackupVaultBackupVaultsClientDiagnostics, Pipeline, _dataProtectionBackupVaultBackupVaultsRestClient.CreateCreateOrUpdateRequest(Guid.Parse(_subscriptionId), _resourceGroupName, vaultName, data).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupVaultBackupVaultsRestClient.CreateOrUpdate(Id.SubscriptionId, Id.ResourceGroupName, vaultName, data, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupVaultResource>(new DataProtectionBackupVaultOperationSource(Client), _dataProtectionBackupVaultBackupVaultsClientDiagnostics, Pipeline, _dataProtectionBackupVaultBackupVaultsRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, vaultName, data).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletion(cancellationToken);
                 return operation;
@@ -144,7 +136,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupVaultBackupVaultsRestClient.GetAsync(Guid.Parse(_subscriptionId), _resourceGroupName, vaultName, cancellationToken).ConfigureAwait(false);
+                var response = await _dataProtectionBackupVaultBackupVaultsRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, vaultName, cancellationToken).ConfigureAwait(false);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DataProtectionBackupVaultResource(Client, response.Value), response.GetRawResponse());
@@ -173,7 +165,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupVaultBackupVaultsRestClient.Get(Guid.Parse(_subscriptionId), _resourceGroupName, vaultName, cancellationToken);
+                var response = _dataProtectionBackupVaultBackupVaultsRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, vaultName, cancellationToken);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DataProtectionBackupVaultResource(Client, response.Value), response.GetRawResponse());
@@ -194,8 +186,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="DataProtectionBackupVaultResource" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<DataProtectionBackupVaultResource> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupVaultBackupVaultsRestClient.CreateGetInResourceGroupRequest(Guid.Parse(_subscriptionId), _resourceGroupName);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupVaultBackupVaultsRestClient.CreateGetInResourceGroupNextPageRequest(nextLink, Guid.Parse(_subscriptionId), _resourceGroupName);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupVaultBackupVaultsRestClient.CreateGetInResourceGroupRequest(Id.SubscriptionId, Id.ResourceGroupName);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupVaultBackupVaultsRestClient.CreateGetInResourceGroupNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new DataProtectionBackupVaultResource(Client, DataProtectionBackupVaultData.DeserializeDataProtectionBackupVaultData(e)), _dataProtectionBackupVaultBackupVaultsClientDiagnostics, Pipeline, "DataProtectionBackupVaultCollection.GetAll", "value", "nextLink", cancellationToken);
         }
 
@@ -208,8 +200,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="DataProtectionBackupVaultResource" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<DataProtectionBackupVaultResource> GetAll(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupVaultBackupVaultsRestClient.CreateGetInResourceGroupRequest(Guid.Parse(_subscriptionId), _resourceGroupName);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupVaultBackupVaultsRestClient.CreateGetInResourceGroupNextPageRequest(nextLink, Guid.Parse(_subscriptionId), _resourceGroupName);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _dataProtectionBackupVaultBackupVaultsRestClient.CreateGetInResourceGroupRequest(Id.SubscriptionId, Id.ResourceGroupName);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _dataProtectionBackupVaultBackupVaultsRestClient.CreateGetInResourceGroupNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new DataProtectionBackupVaultResource(Client, DataProtectionBackupVaultData.DeserializeDataProtectionBackupVaultData(e)), _dataProtectionBackupVaultBackupVaultsClientDiagnostics, Pipeline, "DataProtectionBackupVaultCollection.GetAll", "value", "nextLink", cancellationToken);
         }
 
@@ -230,7 +222,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupVaultBackupVaultsRestClient.GetAsync(Guid.Parse(_subscriptionId), _resourceGroupName, vaultName, cancellationToken: cancellationToken).ConfigureAwait(false);
+                var response = await _dataProtectionBackupVaultBackupVaultsRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, vaultName, cancellationToken: cancellationToken).ConfigureAwait(false);
                 return Response.FromValue(response.Value != null, response.GetRawResponse());
             }
             catch (Exception e)
@@ -257,7 +249,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupVaultBackupVaultsRestClient.Get(Guid.Parse(_subscriptionId), _resourceGroupName, vaultName, cancellationToken: cancellationToken);
+                var response = _dataProtectionBackupVaultBackupVaultsRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, vaultName, cancellationToken: cancellationToken);
                 return Response.FromValue(response.Value != null, response.GetRawResponse());
             }
             catch (Exception e)

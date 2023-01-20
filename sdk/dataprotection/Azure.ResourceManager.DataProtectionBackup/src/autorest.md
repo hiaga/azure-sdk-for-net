@@ -21,7 +21,6 @@ format-by-name-rules:
   'location': 'azure-location'
   '*Uri': 'Uri'
   '*Uris': 'Uri'
-  'SubscriptionIdParameter': 'object'
 
 rename-rules:
   CPU: Cpu
@@ -117,7 +116,6 @@ rename-mapping:
   ValidateRestoreRequestObject: BackupValidateRestoreContent
   BackupVaultResource: DataProtectionBackupVault
   BackupVault: DataProtectionBackupVaultProperties
-  PatchResourceRequestInput: DataProtectionBackupPatch
   ValidateForBackupRequest: AdhocBackupValidateContent
   BaseBackupPolicyResource: DataProtectionBackupPolicy
   BaseBackupPolicy: DataProtectionBackupPolicyPropertiesBase
@@ -328,4 +326,9 @@ directive:
     where: $.paths
     transform: >
       $['/subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/locations/{location}/checkFeatureSupport'].post.parameters[3]['x-ms-client-name'] = 'content';
+# revert the format change of SubscriptionIdParameter in common type V4 to avoid breaking changes
+  - from: types.json
+    where: $.parameters
+    transform: >
+      delete $.SubscriptionIdParameter.format;
 ```

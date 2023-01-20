@@ -27,7 +27,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
     public partial class DataProtectionBackupInstanceResource : ArmResource
     {
         /// <summary> Generate the resource identifier of a <see cref="DataProtectionBackupInstanceResource"/> instance. </summary>
-        public static ResourceIdentifier CreateResourceIdentifier(Guid subscriptionId, string resourceGroupName, string vaultName, string backupInstanceName)
+        public static ResourceIdentifier CreateResourceIdentifier(string subscriptionId, string resourceGroupName, string vaultName, string backupInstanceName)
         {
             var resourceId = $"/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}";
             return new ResourceIdentifier(resourceId);
@@ -141,7 +141,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DataProtectionBackupInstanceResource(Client, response.Value), response.GetRawResponse());
@@ -165,7 +165,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DataProtectionBackupInstanceResource(Client, response.Value), response.GetRawResponse());
@@ -190,8 +190,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.DeleteAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateDeleteRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.DeleteAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateDeleteRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -216,8 +216,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.Delete(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateDeleteRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.Delete(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateDeleteRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
                 return operation;
@@ -246,8 +246,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.CreateOrUpdateAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, data, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupInstanceResource>(new DataProtectionBackupInstanceOperationSource(Client), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateCreateOrUpdateRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, data).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.CreateOrUpdateAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, data, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupInstanceResource>(new DataProtectionBackupInstanceOperationSource(Client), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, data).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -276,8 +276,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.CreateOrUpdate(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, data, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupInstanceResource>(new DataProtectionBackupInstanceOperationSource(Client), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateCreateOrUpdateRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, data).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.CreateOrUpdate(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, data, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionBackupInstanceResource>(new DataProtectionBackupInstanceOperationSource(Client), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateCreateOrUpdateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, data).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletion(cancellationToken);
                 return operation;
@@ -306,8 +306,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.AdhocBackupAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateAdhocBackupRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.AdhocBackupAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateAdhocBackupRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -336,8 +336,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.AdhocBackup(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateAdhocBackupRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.AdhocBackup(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateAdhocBackupRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletion(cancellationToken);
                 return operation;
@@ -366,8 +366,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.TriggerRehydrateAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateTriggerRehydrateRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.TriggerRehydrateAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateTriggerRehydrateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -396,8 +396,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.TriggerRehydrate(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateTriggerRehydrateRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.TriggerRehydrate(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateTriggerRehydrateRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
                 return operation;
@@ -426,8 +426,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.TriggerRestoreAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateTriggerRestoreRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.TriggerRestoreAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateTriggerRestoreRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -456,8 +456,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.TriggerRestore(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateTriggerRestoreRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.TriggerRestore(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateTriggerRestoreRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletion(cancellationToken);
                 return operation;
@@ -482,8 +482,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.ResumeBackupsAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateResumeBackupsRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.ResumeBackupsAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateResumeBackupsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -508,8 +508,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.ResumeBackups(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateResumeBackupsRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.ResumeBackups(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateResumeBackupsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
                 return operation;
@@ -534,8 +534,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.ResumeProtectionAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateResumeProtectionRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.ResumeProtectionAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateResumeProtectionRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -560,8 +560,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.ResumeProtection(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateResumeProtectionRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.ResumeProtection(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateResumeProtectionRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
                 return operation;
@@ -586,8 +586,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.StopProtectionAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateStopProtectionRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.StopProtectionAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateStopProtectionRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -612,8 +612,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.StopProtection(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateStopProtectionRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.StopProtection(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateStopProtectionRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
                 return operation;
@@ -638,8 +638,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.SuspendBackupsAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateSuspendBackupsRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.SuspendBackupsAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateSuspendBackupsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -664,8 +664,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.SuspendBackups(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateSuspendBackupsRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.SuspendBackups(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateSuspendBackupsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
                 return operation;
@@ -695,8 +695,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.SyncBackupInstanceAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateSyncBackupInstanceRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.SyncBackupInstanceAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateSyncBackupInstanceRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -726,8 +726,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.SyncBackupInstance(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateSyncBackupInstanceRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.SyncBackupInstance(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation(_dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateSyncBackupInstanceRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
                 return operation;
@@ -756,8 +756,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.ValidateForRestoreAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateValidateForRestoreRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = await _dataProtectionBackupInstanceBackupInstancesRestClient.ValidateForRestoreAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateValidateForRestoreRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -786,8 +786,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.ValidateForRestore(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateValidateForRestoreRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
+                var response = _dataProtectionBackupInstanceBackupInstancesRestClient.ValidateForRestore(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation<DataProtectionOperationJobExtendedInfo>(new DataProtectionOperationJobExtendedInfoOperationSource(), _dataProtectionBackupInstanceBackupInstancesClientDiagnostics, Pipeline, _dataProtectionBackupInstanceBackupInstancesRestClient.CreateValidateForRestoreRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletion(cancellationToken);
                 return operation;
@@ -814,7 +814,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _restorableTimeRangesRestClient.FindAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
+                var response = await _restorableTimeRangesRestClient.FindAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken).ConfigureAwait(false);
                 return response;
             }
             catch (Exception e)
@@ -839,7 +839,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _restorableTimeRangesRestClient.Find(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, content, cancellationToken);
+                var response = _restorableTimeRangesRestClient.Find(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, content, cancellationToken);
                 return response;
             }
             catch (Exception e)
@@ -872,7 +872,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = await GetTagResource().GetAsync(cancellationToken).ConfigureAwait(false);
                     originalTags.Value.Data.TagValues[key] = value;
                     await GetTagResource().CreateOrUpdateAsync(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken).ConfigureAwait(false);
-                    var originalResponse = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                    var originalResponse = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
                     return Response.FromValue(new DataProtectionBackupInstanceResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -913,7 +913,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = GetTagResource().Get(cancellationToken);
                     originalTags.Value.Data.TagValues[key] = value;
                     GetTagResource().CreateOrUpdate(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken);
-                    var originalResponse = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
+                    var originalResponse = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
                     return Response.FromValue(new DataProtectionBackupInstanceResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -953,7 +953,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = await GetTagResource().GetAsync(cancellationToken).ConfigureAwait(false);
                     originalTags.Value.Data.TagValues.ReplaceWith(tags);
                     await GetTagResource().CreateOrUpdateAsync(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken).ConfigureAwait(false);
-                    var originalResponse = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                    var originalResponse = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
                     return Response.FromValue(new DataProtectionBackupInstanceResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -993,7 +993,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = GetTagResource().Get(cancellationToken);
                     originalTags.Value.Data.TagValues.ReplaceWith(tags);
                     GetTagResource().CreateOrUpdate(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken);
-                    var originalResponse = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
+                    var originalResponse = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
                     return Response.FromValue(new DataProtectionBackupInstanceResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -1032,7 +1032,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = await GetTagResource().GetAsync(cancellationToken).ConfigureAwait(false);
                     originalTags.Value.Data.TagValues.Remove(key);
                     await GetTagResource().CreateOrUpdateAsync(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken).ConfigureAwait(false);
-                    var originalResponse = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                    var originalResponse = await _dataProtectionBackupInstanceBackupInstancesRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
                     return Response.FromValue(new DataProtectionBackupInstanceResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -1071,7 +1071,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = GetTagResource().Get(cancellationToken);
                     originalTags.Value.Data.TagValues.Remove(key);
                     GetTagResource().CreateOrUpdate(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken);
-                    var originalResponse = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
+                    var originalResponse = _dataProtectionBackupInstanceBackupInstancesRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
                     return Response.FromValue(new DataProtectionBackupInstanceResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else

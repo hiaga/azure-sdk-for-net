@@ -25,7 +25,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
     public partial class DeletedBackupInstanceResource : ArmResource
     {
         /// <summary> Generate the resource identifier of a <see cref="DeletedBackupInstanceResource"/> instance. </summary>
-        public static ResourceIdentifier CreateResourceIdentifier(Guid subscriptionId, string resourceGroupName, string vaultName, string backupInstanceName)
+        public static ResourceIdentifier CreateResourceIdentifier(string subscriptionId, string resourceGroupName, string vaultName, string backupInstanceName)
         {
             var resourceId = $"/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/deletedBackupInstances/{backupInstanceName}";
             return new ResourceIdentifier(resourceId);
@@ -98,7 +98,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var response = await _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DeletedBackupInstanceResource(Client, response.Value), response.GetRawResponse());
@@ -122,7 +122,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.Get(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
+                var response = _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new DeletedBackupInstanceResource(Client, response.Value), response.GetRawResponse());
@@ -146,8 +146,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.UndeleteAsync(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
-                var operation = new DataProtectionBackupArmOperation(_deletedBackupInstanceResourceDeletedBackupInstancesClientDiagnostics, Pipeline, _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.CreateUndeleteRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = await _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.UndeleteAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var operation = new DataProtectionBackupArmOperation(_deletedBackupInstanceResourceDeletedBackupInstancesClientDiagnostics, Pipeline, _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.CreateUndeleteRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
                 return operation;
@@ -171,8 +171,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.Undelete(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name, cancellationToken);
-                var operation = new DataProtectionBackupArmOperation(_deletedBackupInstanceResourceDeletedBackupInstancesClientDiagnostics, Pipeline, _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.CreateUndeleteRequest(Guid.Parse(Id.Parent.Parent.Parent.Name), Id.Parent.Parent.Name, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
+                var response = _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.Undelete(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name, cancellationToken);
+                var operation = new DataProtectionBackupArmOperation(_deletedBackupInstanceResourceDeletedBackupInstancesClientDiagnostics, Pipeline, _deletedBackupInstanceResourceDeletedBackupInstancesRestClient.CreateUndeleteRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Parent.Name, Id.Name).Request, response, OperationFinalStateVia.Location);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
                 return operation;

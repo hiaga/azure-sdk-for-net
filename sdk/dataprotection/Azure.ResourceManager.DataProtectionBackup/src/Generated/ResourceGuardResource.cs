@@ -23,12 +23,12 @@ namespace Azure.ResourceManager.DataProtectionBackup
     /// A Class representing a ResourceGuard along with the instance operations that can be performed on it.
     /// If you have a <see cref="ResourceIdentifier" /> you can construct a <see cref="ResourceGuardResource" />
     /// from an instance of <see cref="ArmClient" /> using the GetResourceGuardResource method.
-    /// Otherwise you can get one from its parent resource <see cref="TenantResource" /> using the GetResourceGuard method.
+    /// Otherwise you can get one from its parent resource <see cref="ResourceGroupResource" /> using the GetResourceGuard method.
     /// </summary>
     public partial class ResourceGuardResource : ArmResource
     {
         /// <summary> Generate the resource identifier of a <see cref="ResourceGuardResource"/> instance. </summary>
-        public static ResourceIdentifier CreateResourceIdentifier(Guid subscriptionId, string resourceGroupName, string resourceGuardsName)
+        public static ResourceIdentifier CreateResourceIdentifier(string subscriptionId, string resourceGroupName, string resourceGuardsName)
         {
             var resourceId = $"/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/resourceGuards/{resourceGuardsName}";
             return new ResourceIdentifier(resourceId);
@@ -101,7 +101,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken).ConfigureAwait(false);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new ResourceGuardResource(Client, response.Value), response.GetRawResponse());
@@ -125,7 +125,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.Get(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken);
+                var response = _resourceGuardRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken);
                 if (response.Value == null)
                     throw new RequestFailedException(response.GetRawResponse());
                 return Response.FromValue(new ResourceGuardResource(Client, response.Value), response.GetRawResponse());
@@ -150,7 +150,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.DeleteAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.DeleteAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken).ConfigureAwait(false);
                 var operation = new DataProtectionBackupArmOperation(response);
                 if (waitUntil == WaitUntil.Completed)
                     await operation.WaitForCompletionResponseAsync(cancellationToken).ConfigureAwait(false);
@@ -176,7 +176,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.Delete(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken);
+                var response = _resourceGuardRestClient.Delete(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken);
                 var operation = new DataProtectionBackupArmOperation(response);
                 if (waitUntil == WaitUntil.Completed)
                     operation.WaitForCompletionResponse(cancellationToken);
@@ -205,7 +205,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.PatchAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, patch, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.PatchAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, patch, cancellationToken).ConfigureAwait(false);
                 return Response.FromValue(new ResourceGuardResource(Client, response.Value), response.GetRawResponse());
             }
             catch (Exception e)
@@ -231,7 +231,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.Patch(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, patch, cancellationToken);
+                var response = _resourceGuardRestClient.Patch(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, patch, cancellationToken);
                 return Response.FromValue(new ResourceGuardResource(Client, response.Value), response.GetRawResponse());
             }
             catch (Exception e)
@@ -250,8 +250,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<ResourceGuardProtectedObjectData> GetDisableSoftDeleteObjectsAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDisableSoftDeleteRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDisableSoftDeleteRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDisableSoftDeleteRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDisableSoftDeleteRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetDisableSoftDeleteObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -264,8 +264,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<ResourceGuardProtectedObjectData> GetDisableSoftDeleteObjects(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDisableSoftDeleteRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDisableSoftDeleteRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDisableSoftDeleteRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDisableSoftDeleteRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetDisableSoftDeleteObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -278,8 +278,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<ResourceGuardProtectedObjectData> GetDeleteResourceGuardProxyObjectsAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDeleteResourceGuardProxyRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDeleteResourceGuardProxyRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDeleteResourceGuardProxyRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDeleteResourceGuardProxyRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetDeleteResourceGuardProxyObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -292,8 +292,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<ResourceGuardProtectedObjectData> GetDeleteResourceGuardProxyObjects(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDeleteResourceGuardProxyRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDeleteResourceGuardProxyRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDeleteResourceGuardProxyRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDeleteResourceGuardProxyRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetDeleteResourceGuardProxyObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -306,8 +306,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<ResourceGuardProtectedObjectData> GetBackupSecurityPinObjectsAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetBackupSecurityPinRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetBackupSecurityPinRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetBackupSecurityPinRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetBackupSecurityPinRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetBackupSecurityPinObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -320,8 +320,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<ResourceGuardProtectedObjectData> GetBackupSecurityPinObjects(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetBackupSecurityPinRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetBackupSecurityPinRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetBackupSecurityPinRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetBackupSecurityPinRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetBackupSecurityPinObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -334,8 +334,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<ResourceGuardProtectedObjectData> GetDeleteProtectedItemObjectsAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDeleteProtectedItemRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDeleteProtectedItemRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDeleteProtectedItemRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDeleteProtectedItemRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetDeleteProtectedItemObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -348,8 +348,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<ResourceGuardProtectedObjectData> GetDeleteProtectedItemObjects(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDeleteProtectedItemRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDeleteProtectedItemRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetDeleteProtectedItemRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetDeleteProtectedItemRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetDeleteProtectedItemObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -362,8 +362,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<ResourceGuardProtectedObjectData> GetUpdateProtectionPolicyObjectsAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetUpdateProtectionPolicyRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetUpdateProtectionPolicyRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetUpdateProtectionPolicyRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetUpdateProtectionPolicyRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetUpdateProtectionPolicyObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -376,8 +376,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<ResourceGuardProtectedObjectData> GetUpdateProtectionPolicyObjects(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetUpdateProtectionPolicyRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetUpdateProtectionPolicyRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetUpdateProtectionPolicyRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetUpdateProtectionPolicyRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetUpdateProtectionPolicyObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -390,8 +390,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> An async collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual AsyncPageable<ResourceGuardProtectedObjectData> GetUpdateProtectedItemObjectsAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetUpdateProtectedItemRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetUpdateProtectedItemRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetUpdateProtectedItemRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetUpdateProtectedItemRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetUpdateProtectedItemObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -404,8 +404,8 @@ namespace Azure.ResourceManager.DataProtectionBackup
         /// <returns> A collection of <see cref="ResourceGuardProtectedObjectData" /> that may take multiple service requests to iterate over. </returns>
         public virtual Pageable<ResourceGuardProtectedObjectData> GetUpdateProtectedItemObjects(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetUpdateProtectedItemRequestsObjectsRequest(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetUpdateProtectedItemRequestsObjectsNextPageRequest(nextLink, Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => _resourceGuardRestClient.CreateGetUpdateProtectedItemRequestsObjectsRequest(Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => _resourceGuardRestClient.CreateGetUpdateProtectedItemRequestsObjectsNextPageRequest(nextLink, Id.SubscriptionId, Id.ResourceGroupName, Id.Name);
             return PageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, ResourceGuardProtectedObjectData.DeserializeResourceGuardProtectedObjectData, _resourceGuardClientDiagnostics, Pipeline, "ResourceGuardResource.GetUpdateProtectedItemObjects", "value", "nextLink", cancellationToken);
         }
 
@@ -426,7 +426,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetDefaultDisableSoftDeleteRequestsObjectAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetDefaultDisableSoftDeleteRequestsObjectAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
                 return response;
             }
             catch (Exception e)
@@ -453,7 +453,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.GetDefaultDisableSoftDeleteRequestsObject(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken);
+                var response = _resourceGuardRestClient.GetDefaultDisableSoftDeleteRequestsObject(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken);
                 return response;
             }
             catch (Exception e)
@@ -480,7 +480,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetDefaultDeleteResourceGuardProxyRequestsObjectAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetDefaultDeleteResourceGuardProxyRequestsObjectAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
                 return response;
             }
             catch (Exception e)
@@ -507,7 +507,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.GetDefaultDeleteResourceGuardProxyRequestsObject(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken);
+                var response = _resourceGuardRestClient.GetDefaultDeleteResourceGuardProxyRequestsObject(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken);
                 return response;
             }
             catch (Exception e)
@@ -534,7 +534,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetDefaultBackupSecurityPinRequestsObjectAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetDefaultBackupSecurityPinRequestsObjectAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
                 return response;
             }
             catch (Exception e)
@@ -561,7 +561,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.GetDefaultBackupSecurityPinRequestsObject(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken);
+                var response = _resourceGuardRestClient.GetDefaultBackupSecurityPinRequestsObject(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken);
                 return response;
             }
             catch (Exception e)
@@ -588,7 +588,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetDefaultDeleteProtectedItemRequestsObjectAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetDefaultDeleteProtectedItemRequestsObjectAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
                 return response;
             }
             catch (Exception e)
@@ -615,7 +615,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.GetDefaultDeleteProtectedItemRequestsObject(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken);
+                var response = _resourceGuardRestClient.GetDefaultDeleteProtectedItemRequestsObject(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken);
                 return response;
             }
             catch (Exception e)
@@ -642,7 +642,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetDefaultUpdateProtectionPolicyRequestsObjectAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetDefaultUpdateProtectionPolicyRequestsObjectAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
                 return response;
             }
             catch (Exception e)
@@ -669,7 +669,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.GetDefaultUpdateProtectionPolicyRequestsObject(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken);
+                var response = _resourceGuardRestClient.GetDefaultUpdateProtectionPolicyRequestsObject(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken);
                 return response;
             }
             catch (Exception e)
@@ -696,7 +696,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = await _resourceGuardRestClient.GetDefaultUpdateProtectedItemRequestsObjectAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
+                var response = await _resourceGuardRestClient.GetDefaultUpdateProtectedItemRequestsObjectAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken).ConfigureAwait(false);
                 return response;
             }
             catch (Exception e)
@@ -723,7 +723,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
             scope.Start();
             try
             {
-                var response = _resourceGuardRestClient.GetDefaultUpdateProtectedItemRequestsObject(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, requestName, cancellationToken);
+                var response = _resourceGuardRestClient.GetDefaultUpdateProtectedItemRequestsObject(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, requestName, cancellationToken);
                 return response;
             }
             catch (Exception e)
@@ -756,7 +756,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = await GetTagResource().GetAsync(cancellationToken).ConfigureAwait(false);
                     originalTags.Value.Data.TagValues[key] = value;
                     await GetTagResource().CreateOrUpdateAsync(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken).ConfigureAwait(false);
-                    var originalResponse = await _resourceGuardRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                    var originalResponse = await _resourceGuardRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken).ConfigureAwait(false);
                     return Response.FromValue(new ResourceGuardResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -802,7 +802,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = GetTagResource().Get(cancellationToken);
                     originalTags.Value.Data.TagValues[key] = value;
                     GetTagResource().CreateOrUpdate(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken);
-                    var originalResponse = _resourceGuardRestClient.Get(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken);
+                    var originalResponse = _resourceGuardRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken);
                     return Response.FromValue(new ResourceGuardResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -847,7 +847,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = await GetTagResource().GetAsync(cancellationToken).ConfigureAwait(false);
                     originalTags.Value.Data.TagValues.ReplaceWith(tags);
                     await GetTagResource().CreateOrUpdateAsync(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken).ConfigureAwait(false);
-                    var originalResponse = await _resourceGuardRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                    var originalResponse = await _resourceGuardRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken).ConfigureAwait(false);
                     return Response.FromValue(new ResourceGuardResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -888,7 +888,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = GetTagResource().Get(cancellationToken);
                     originalTags.Value.Data.TagValues.ReplaceWith(tags);
                     GetTagResource().CreateOrUpdate(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken);
-                    var originalResponse = _resourceGuardRestClient.Get(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken);
+                    var originalResponse = _resourceGuardRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken);
                     return Response.FromValue(new ResourceGuardResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -928,7 +928,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = await GetTagResource().GetAsync(cancellationToken).ConfigureAwait(false);
                     originalTags.Value.Data.TagValues.Remove(key);
                     await GetTagResource().CreateOrUpdateAsync(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken).ConfigureAwait(false);
-                    var originalResponse = await _resourceGuardRestClient.GetAsync(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken).ConfigureAwait(false);
+                    var originalResponse = await _resourceGuardRestClient.GetAsync(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken).ConfigureAwait(false);
                     return Response.FromValue(new ResourceGuardResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
@@ -972,7 +972,7 @@ namespace Azure.ResourceManager.DataProtectionBackup
                     var originalTags = GetTagResource().Get(cancellationToken);
                     originalTags.Value.Data.TagValues.Remove(key);
                     GetTagResource().CreateOrUpdate(WaitUntil.Completed, originalTags.Value.Data, cancellationToken: cancellationToken);
-                    var originalResponse = _resourceGuardRestClient.Get(Guid.Parse(Id.Parent.Parent.Name), Id.Parent.Name, Id.Name, cancellationToken);
+                    var originalResponse = _resourceGuardRestClient.Get(Id.SubscriptionId, Id.ResourceGroupName, Id.Name, cancellationToken);
                     return Response.FromValue(new ResourceGuardResource(Client, originalResponse.Value), originalResponse.GetRawResponse());
                 }
                 else
